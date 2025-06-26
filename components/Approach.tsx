@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { SVGProps } from "react";
 
 import { AnimatePresence, motion } from "motion/react";
 import { CanvasRevealEffect } from "./ui/CanvasRevealEffect";
@@ -56,7 +56,7 @@ const Card = ({
   title: string;
   icon: React.ReactNode;
   children?: React.ReactNode;
-  description?:String;
+  description?:string;
 }) => {
   const [hovered, setHovered] = React.useState(false);
   return (
@@ -110,7 +110,8 @@ const AceternityIcon = ({order}:{order:string}) => {
   );
 };
 
-export const Icon = ({ className, ...rest }: any) => {
+
+export const Icon = ({ className, ...rest }: SVGProps<SVGSVGElement>) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -123,6 +124,6 @@ export const Icon = ({ className, ...rest }: any) => {
     >
       <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v12m6-6H6" />
     </svg>
-  );
+  )
 };
 export default Approach;
