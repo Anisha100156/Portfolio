@@ -7,7 +7,7 @@ import { OrbitControls } from "@react-three/drei";
 import countries from "@/data/globe.json";
 
 // Declare JSX element type for <threeGlobe />
-declare module '@react-three/fiber' {
+declare module "@react-three/fiber" {
   interface ThreeElements {
     threeGlobe: any;
   }
@@ -136,7 +136,7 @@ export function Globe({ globeConfig, data }: WorldProps) {
     });
 
     const filteredPoints = points.filter(
-      (v, i, a) => a.findIndex((v2) => v2.lat === v.lat && v2.lng === v2.lng) === i
+      (v, i, a) => a.findIndex((v2) => v2.lat === v.lat && v2.lng === v.lng) === i
     );
 
     setGlobeData(filteredPoints);
@@ -147,21 +147,21 @@ export function Globe({ globeConfig, data }: WorldProps) {
 
     globeRef.current
       .arcsData(data)
-      .arcStartLat((d: object) => (d as Position).startLat)
-      .arcStartLng((d: object) => (d as Position).startLng)
-      .arcEndLat((d: object) => (d as Position).endLat)
-      .arcEndLng((d: object) => (d as Position).endLng)
-      .arcColor((d: object) => (d as Position).color)
-      .arcAltitude((d: object) => (d as Position).arcAlt)
+      .arcStartLat(((d) => (d as Position).startLat) as (obj: object) => number)
+      .arcStartLng(((d) => (d as Position).startLng) as (obj: object) => number)
+      .arcEndLat(((d) => (d as Position).endLat) as (obj: object) => number)
+      .arcEndLng(((d) => (d as Position).endLng) as (obj: object) => number)
+      .arcColor(((d) => (d as Position).color) as (obj: object) => string)
+      .arcAltitude(((d) => (d as Position).arcAlt) as (obj: object) => number)
       .arcStroke(() => [0.32, 0.28, 0.3][Math.floor(Math.random() * 3)])
       .arcDashLength(defaultProps.arcLength)
-      .arcDashInitialGap((d: object) => (d as Position).order)
+      .arcDashInitialGap(((d) => (d as Position).order) as (obj: object) => number)
       .arcDashGap(15)
       .arcDashAnimateTime(() => defaultProps.arcTime);
 
     globeRef.current
       .pointsData(data)
-      .pointColor((d: object) => (d as Position).color)
+      .pointColor(((d) => (d as Position).color) as (obj: object) => string)
       .pointsMerge(true)
       .pointAltitude(0.0)
       .pointRadius(2);
@@ -172,7 +172,15 @@ export function Globe({ globeConfig, data }: WorldProps) {
       .ringMaxRadius(defaultProps.maxRings)
       .ringPropagationSpeed(RING_PROPAGATION_SPEED)
       .ringRepeatPeriod((defaultProps.arcTime * defaultProps.arcLength) / defaultProps.rings);
-  }, [data, defaultProps.arcLength, defaultProps.arcTime, defaultProps.polygonColor, defaultProps.maxRings, defaultProps.rings, globeData]);
+  }, [
+    data,
+    defaultProps.arcLength,
+    defaultProps.arcTime,
+    defaultProps.polygonColor,
+    defaultProps.maxRings,
+    defaultProps.rings,
+    globeData,
+  ]);
 
   useEffect(() => {
     if (globeRef.current) {
