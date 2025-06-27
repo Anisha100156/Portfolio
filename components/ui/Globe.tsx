@@ -2,14 +2,14 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import { Color, Scene, Fog, PerspectiveCamera, Vector3 } from "three";
 import ThreeGlobe from "three-globe";
-import { useThree, Canvas, extend } from "@react-three/fiber";
+import { useThree, Object3DNode, Canvas, extend } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
 import countries from "@/data/globe.json";
 
-// Declare JSX element type for <threeGlobe />
+// Type support for <threeGlobe /> in JSX
 declare module "@react-three/fiber" {
   interface ThreeElements {
-    threeGlobe: any;
+    threeGlobe: Object3DNode<ThreeGlobe, typeof ThreeGlobe>;
   }
 }
 
@@ -60,6 +60,8 @@ interface WorldProps {
   data: Position[];
 }
 
+let numbersOfRings: number[] = [];
+
 export function Globe({ globeConfig, data }: WorldProps) {
   const [globeData, setGlobeData] = useState<
     { size: number; order: number; color: (t: number) => string; lat: number; lng: number }[]
@@ -86,7 +88,7 @@ export function Globe({ globeConfig, data }: WorldProps) {
   const buildMaterial = useCallback(() => {
     if (!globeRef.current) return;
 
-    const globeMaterial = globeRef.current.globeMaterial() as unknown as {
+    const globeMaterial = globeRef.current.globeMaterial() as {
       color: Color;
       emissive: Color;
       emissiveIntensity: number;
@@ -147,21 +149,21 @@ export function Globe({ globeConfig, data }: WorldProps) {
 
     globeRef.current
       .arcsData(data)
-      .arcStartLat(((d) => (d as Position).startLat) as (obj: object) => number)
-      .arcStartLng(((d) => (d as Position).startLng) as (obj: object) => number)
-      .arcEndLat(((d) => (d as Position).endLat) as (obj: object) => number)
-      .arcEndLng(((d) => (d as Position).endLng) as (obj: object) => number)
-      .arcColor(((d) => (d as Position).color) as (obj: object) => string)
-      .arcAltitude(((d) => (d as Position).arcAlt) as (obj: object) => number)
+      .arcStartLat((d: Position) => d.startLat)
+      .arcStartLng((d: Position) => d.startLng)
+      .arcEndLat((d: Position) => d.endLat)
+      .arcEndLng((d: Position) => d.endLng)
+      .arcColor((d: Position) => d.color)
+      .arcAltitude((d: Position) => d.arcAlt)
       .arcStroke(() => [0.32, 0.28, 0.3][Math.floor(Math.random() * 3)])
       .arcDashLength(defaultProps.arcLength)
-      .arcDashInitialGap(((d) => (d as Position).order) as (obj: object) => number)
+      .arcDashInitialGap((d: Position) => d.order)
       .arcDashGap(15)
       .arcDashAnimateTime(() => defaultProps.arcTime);
 
     globeRef.current
       .pointsData(data)
-      .pointColor(((d) => (d as Position).color) as (obj: object) => string)
+      .pointColor((d: Position) => d.color)
       .pointsMerge(true)
       .pointAltitude(0.0)
       .pointRadius(2);
@@ -217,10 +219,10 @@ export function Globe({ globeConfig, data }: WorldProps) {
     const interval = setInterval(() => {
       if (!globeRef.current) return;
 
-      const ringIndexes = genRandomNumbers(0, data.length, Math.floor((data.length * 4) / 5));
+      numbersOfRings = genRandomNumbers(0, data.length, Math.floor((data.length * 4) / 5));
 
       globeRef.current.ringsData(
-        globeData.filter((_, index) => ringIndexes.includes(index))
+        globeData.filter((_, index) => numbersOfRings.includes(index))
       );
     }, 2000);
 
@@ -237,7 +239,7 @@ export function WebGLRendererConfig() {
     gl.setPixelRatio(window.devicePixelRatio);
     gl.setSize(size.width, size.height);
     gl.setClearColor(0xffaaff, 0);
-  }, [gl, size.height, size.width]);
+  }, [gl, size.width, size.height]);
 
   return null;
 }
@@ -269,11 +271,11 @@ export function World(props: WorldProps) {
   );
 }
 
-function hexToRgb(hex: string) {
+function hexToRgb(hex: string): { r: number; g: number; b: number } | null {
   const shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
-  const fullHex = hex.replace(shorthandRegex, (_, r, g, b) => r + r + g + g + b + b);
+  hex = hex.replace(shorthandRegex, (_, r, g, b) => r + r + g + g + b + b);
 
-  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(fullHex);
+  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
   return result
     ? {
         r: parseInt(result[1], 16),
@@ -283,7 +285,7 @@ function hexToRgb(hex: string) {
     : null;
 }
 
-function genRandomNumbers(min: number, max: number, count: number) {
+function genRandomNumbers(min: number, max: number, count: number): number[] {
   const arr: number[] = [];
   while (arr.length < count) {
     const r = Math.floor(Math.random() * (max - min)) + min;
