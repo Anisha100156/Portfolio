@@ -62,7 +62,7 @@ export const companies = [
 export const workExperience = [
   {
     id: 1,
-    title: "Engineering trainee ",
+    title: "Engineering trainee at SAIL-ISP",
     desc: "Assisting in the maintenance and troubleshooting of servers, networks, and computer systems across the plant.Supporting cybersecurity measures for plant networks and critical IT assets.",
     className: "md:col-span-2",
     thumbnail: "/exp1.svg",
