@@ -1,6 +1,7 @@
 import { FlatCompat } from '@eslint/eslintrc';
 import { dirname } from 'path';
 import { fileURLToPath } from 'url';
+import parser from '@typescript-eslint/parser';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -18,13 +19,13 @@ export default [
   {
     files: ['**/*.ts', '**/*.tsx'],
     languageOptions: {
-      parser: '@typescript-eslint/parser',
+      parser,  // ✅ This fixes your parser error
       parserOptions: {
         project: './tsconfig.json',
       },
     },
     rules: {
-      '@typescript-eslint/no-explicit-any': 'off',  // ✅ This disables the error
+      '@typescript-eslint/no-explicit-any': 'off',
     },
   },
 ];
