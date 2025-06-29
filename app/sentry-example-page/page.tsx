@@ -3,6 +3,7 @@
 import Head from "next/head";
 import * as Sentry from "@sentry/nextjs";
 import { useState, useEffect } from "react";
+import Link from "next/link";
 
 class SentryExampleFrontendError extends Error {
   constructor(message: string | undefined) {
@@ -40,8 +41,8 @@ export default function Page() {
         </h1>
 
         <p className="description">
-          Click the button below, and view the sample error on the Sentry <a target="_blank" href="https://nsut-dr.sentry.io/issues/?project=4509391089041488">Issues Page</a>.
-          For more details about setting up Sentry, <a target="_blank" href="https://docs.sentry.io/platforms/javascript/guides/nextjs/">read our docs</a>.
+          Click the button below, and view the sample error on the Sentry <Link target="_blank" href="https://nsut-dr.sentry.io/issues/?project=4509391089041488">Issues Page</Link>.
+          For more details about setting up Sentry, <Link target="_blank" href="https://docs.sentry.io/platforms/javascript/guides/nextjs/">read our docs</Link>.
         </p>
 
         <button
@@ -70,7 +71,7 @@ export default function Page() {
           </p>
         ) : !isConnected ? (
           <div className="connectivity-error">
-            <p>The Sentry SDK is not able to reach Sentry right now - this may be due to an adblocker. For more information, see <a target="_blank" href="https://docs.sentry.io/platforms/javascript/guides/nextjs/troubleshooting/#the-sdk-is-not-sending-any-data">the troubleshooting guide</a>.</p>
+            <p>The Sentry SDK is not able to reach Sentry right now - this may be due to an adblocker. For more information, see <Link target="_blank" href="https://docs.sentry.io/platforms/javascript/guides/nextjs/troubleshooting/#the-sdk-is-not-sending-any-data">the troubleshooting guide</Link>.</p>
           </div>
         ) : (
           <div className="success_placeholder" />
