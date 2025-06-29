@@ -28,6 +28,7 @@ export const CanvasRevealEffect = ({
           dotSize={dotSize ?? 3}
           opacities={opacities}
           shader={`
+
             float animation_speed_factor = ${animationSpeed.toFixed(1)};
             float intro_offset = distance(u_resolution / 2.0 / u_total_size, st2) * 0.01 + (random(st2) * 0.15);
             opacity *= step(intro_offset, u_time * animation_speed_factor);
@@ -141,12 +142,15 @@ const DotMatrix: React.FC<DotMatrixProps> = ({
   );
 };
 
-type Uniforms = {
-  [key: string]: {
-    value: number[] | number[][] | number | THREE.Vector2;
+type UniformValue = number | number[] | number[][] | THREE.Vector2;
+
+type Uniforms = Record<
+  string,
+  {
+    value: UniformValue;
     type: string;
-  };
-};
+  }
+>;
 
 interface ShaderProps {
   source: string;
@@ -164,7 +168,7 @@ const ShaderMaterialComponent = ({
   maxFps?: number;
 }) => {
   const { size } = useThree();
-  const ref = useRef<THREE.Mesh>(null); // ✅ FIXED useRef error
+  const ref = useRef<THREE.Mesh>(null);
   const lastFrameTime = useRef<number>(0);
 
   useFrame(({ clock }) => {
@@ -179,7 +183,7 @@ const ShaderMaterialComponent = ({
   });
 
   const getUniforms = useMemo(() => {
-    const preparedUniforms: Record<string, { value: any }> = {};
+    const preparedUniforms: Record<string, { value: UniformValue }> = {};
 
     for (const uniformName in uniforms) {
       preparedUniforms[uniformName] = { value: uniforms[uniformName].value };
@@ -191,7 +195,7 @@ const ShaderMaterialComponent = ({
     };
 
     return preparedUniforms;
-  }, [size.width, size.height, uniforms]); // ✅ FIX: Added 'uniforms' to dependency array
+  }, [size.width, size.height, uniforms]);
 
   const material = useMemo(() => {
     return new THREE.ShaderMaterial({
