@@ -1,5 +1,4 @@
-"use client";
-import React, { ReactNode, ElementType, HTMLAttributes, useRef } from "react";
+import React from "react";
 import {
   motion,
   useAnimationFrame,
@@ -7,19 +6,20 @@ import {
   useMotionValue,
   useTransform,
 } from "framer-motion";
+import { useRef } from "react";
 import { cn } from "@/utils/cn";
 
-interface ButtonProps extends HTMLAttributes<HTMLElement> {
+type ButtonProps<T extends React.ElementType> = {
   borderRadius?: string;
-  children: ReactNode;
-  as?: ElementType;
+  children: React.ReactNode;
+  as?: T;
   containerClassName?: string;
   borderClassName?: string;
   duration?: number;
   className?: string;
-}
+} & React.ComponentPropsWithoutRef<T>;
 
-export function Button({
+export function Button<T extends React.ElementType = "button">({
   borderRadius = "1.75rem",
   children,
   as: Component = "button",
@@ -28,7 +28,7 @@ export function Button({
   duration,
   className,
   ...otherProps
-}: ButtonProps) {
+}: ButtonProps<T>) {
   return (
     <Component
       className={cn(
@@ -41,7 +41,7 @@ export function Button({
       {...otherProps}
     >
       <div
-        className="absolute inset-0 rounded-[1.75rem]"
+        className="absolute inset-0 rounde-[1.75rem]"
         style={{ borderRadius: `calc(${borderRadius} * 0.96)` }}
       >
         <MovingBorder duration={duration} rx="30%" ry="30%">
@@ -69,33 +69,38 @@ export function Button({
   );
 }
 
-interface MovingBorderProps extends React.SVGAttributes<SVGSVGElement> {
-  children: ReactNode;
-  duration?: number;
-  rx?: string;
-  ry?: string;
-}
-
 export const MovingBorder = ({
   children,
   duration = 2000,
   rx,
   ry,
   ...otherProps
-}: MovingBorderProps) => {
-  const pathRef = useRef<SVGRectElement | null>(null);
+}: {
+  children: React.ReactNode;
+  duration?: number;
+  rx?: string;
+  ry?: string;
+  [key: string]: any;
+}) => {
+  const pathRef = useRef<SVGRectElement>(null);
   const progress = useMotionValue<number>(0);
 
   useAnimationFrame((time) => {
-    const length = pathRef.current?.getTotalLength();
+    const length = pathRef.current?.getTotalLength?.();
     if (length) {
       const pxPerMillisecond = length / duration;
       progress.set((time * pxPerMillisecond) % length);
     }
   });
 
-  const x = useTransform(progress, (val) => pathRef.current?.getPointAtLength(val).x ?? 0);
-  const y = useTransform(progress, (val) => pathRef.current?.getPointAtLength(val).y ?? 0);
+  const x = useTransform(
+    progress,
+    (val) => pathRef.current?.getPointAtLength?.(val).x ?? 0
+  );
+  const y = useTransform(
+    progress,
+    (val) => pathRef.current?.getPointAtLength?.(val).y ?? 0
+  );
 
   const transform = useMotionTemplate`translateX(${x}px) translateY(${y}px) translateX(-50%) translateY(-50%)`;
 
