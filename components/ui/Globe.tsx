@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState, useCallback, useMemo } from "react";
-import { Color, Scene, Fog, PerspectiveCamera, Vector3, WebGLRenderer } from "three";
-import ThreeGlobe, { Accessor, ObjAccessor } from "three-globe";
+import { Color, Scene, Fog, PerspectiveCamera, Vector3 } from "three";
+import ThreeGlobe from "three-globe";
 import { useThree, Canvas, extend } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
 import countries from "@/data/globe.json";
