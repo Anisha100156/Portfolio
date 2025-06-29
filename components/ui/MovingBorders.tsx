@@ -1,5 +1,5 @@
 "use client";
-import React, { useRef } from "react";
+import React, { useRef, ElementType } from "react";
 import {
   motion,
   useAnimationFrame,
@@ -9,10 +9,11 @@ import {
 } from "framer-motion";
 import { cn } from "@/utils/cn";
 
+// Button Props
 interface ButtonProps extends React.HTMLAttributes<HTMLElement> {
   borderRadius?: string;
   children: React.ReactNode;
-  as?: any;
+  as?: ElementType; // ✅ Fix for the 'as' prop (generic element/component)
   containerClassName?: string;
   borderClassName?: string;
   duration?: number;
@@ -65,12 +66,12 @@ export function Button({
   );
 }
 
-interface MovingBorderProps {
+// MovingBorder Props
+interface MovingBorderProps extends React.SVGProps<SVGSVGElement> {
   children: React.ReactNode;
   duration?: number;
   rx?: string;
   ry?: string;
-  [key: string]: any;
 }
 
 export const MovingBorder = ({
