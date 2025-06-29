@@ -143,29 +143,45 @@ export function Globe({ globeConfig, data }: WorldProps) {
   const startAnimation = useCallback(() => {
     if (!globeRef.current || !globeData) return;
 
+    // @ts-ignore
     globeRef.current
       .arcsData(data)
-      .arcStartLat((d) => (d as Position).startLat)
-      .arcStartLng((d) => (d as Position).startLng)
-      .arcEndLat((d) => (d as Position).endLat)
-      .arcEndLng((d) => (d as Position).endLng)
-      .arcColor((d) => () => (d as Position).color)
-      .arcAltitude((d) => (d as Position).arcAlt)
+      // @ts-ignore
+      .arcStartLat((d: Position) => d.startLat)
+      // @ts-ignore
+      .arcStartLng((d: Position) => d.startLng)
+      // @ts-ignore
+      .arcEndLat((d: Position) => d.endLat)
+      // @ts-ignore
+      .arcEndLng((d: Position) => d.endLng)
+      // @ts-ignore
+      .arcColor((d: Position) => () => d.color)
+      // @ts-ignore
+      .arcAltitude((d: Position) => d.arcAlt)
+      // @ts-ignore
       .arcStroke(() => [0.32, 0.28, 0.3][Math.round(Math.random() * 2)])
+      // @ts-ignore
       .arcDashLength(defaultProps.arcLength)
-      .arcDashInitialGap((d) => (d as Position).order)
+      // @ts-ignore
+      .arcDashInitialGap((d: Position) => d.order)
+      // @ts-ignore
       .arcDashGap(15)
+      // @ts-ignore
       .arcDashAnimateTime(() => defaultProps.arcTime);
 
+    // @ts-ignore
     globeRef.current
       .pointsData(data)
-      .pointColor((d) => () => (d as Position).color)
+      // @ts-ignore
+      .pointColor((d: Position) => () => d.color)
       .pointsMerge(true)
       .pointAltitude(0.0)
       .pointRadius(2);
 
+    // @ts-ignore
     globeRef.current
       .ringsData([])
+      // @ts-ignore
       .ringColor((d: { color: (t: number) => string }) => (t) => d.color(t))
       .ringMaxRadius(defaultProps.maxRings)
       .ringPropagationSpeed(RING_PROPAGATION_SPEED)
@@ -181,6 +197,7 @@ export function Globe({ globeConfig, data }: WorldProps) {
 
   useEffect(() => {
     if (globeRef.current && globeData) {
+      // @ts-ignore
       globeRef.current
         .hexPolygonsData(countries.features)
         .hexPolygonResolution(3)
@@ -202,6 +219,7 @@ export function Globe({ globeConfig, data }: WorldProps) {
 
       numbersOfRings = genRandomNumbers(0, data.length, Math.floor((data.length * 4) / 5));
 
+      // @ts-ignore
       globeRef.current.ringsData(
         globeData.filter((_, i) => numbersOfRings.includes(i))
       );
@@ -243,8 +261,8 @@ export function World(props: WorldProps) {
         enableZoom={false}
         minDistance={cameraZ}
         maxDistance={cameraZ}
-        autoRotateSpeed={1}
         autoRotate
+        autoRotateSpeed={1}
         minPolarAngle={Math.PI / 3.5}
         maxPolarAngle={Math.PI - Math.PI / 3}
       />
