@@ -1,6 +1,8 @@
+import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "./provider";
+import type { ReactNode } from "react";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -12,10 +14,16 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-// Optional: If you still want to set metadata (Next.js uses this for SEO/head), move it to `next.config.js` or `_document.js`
-// or just remove if not needed in JS files.
+export const metadata: Metadata = {
+  title: "Anisha's Portfolio",
+  description: "Modern and Minimalist JS Mastery Portfolio",
+};
 
-export default function RootLayout({ children }) {
+interface RootLayoutProps {
+  children: ReactNode;
+}
+
+export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang="en">
       <body
